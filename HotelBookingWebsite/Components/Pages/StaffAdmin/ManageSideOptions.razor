@@ -1,0 +1,166 @@
+﻿@page "/staff-admin/manage-sideoptions"
+@using HotelBookingWebsite.Data.Entities
+@using Microsoft.AspNetCore.Antiforgery
+@using Microsoft.AspNetCore.Authorization
+
+
+@attribute [RequireAntiforgeryToken]
+@attribute [StreamRendering]
+@inject ISideOptionService SideOptionService 
+@inject NavigationManager NavigationManager
+
+
+<div class="container">
+    <h1>Quản lý SideOptions</h1>
+
+    <hr />
+    <div class="row">
+        <div class="col-sm-3">
+            <EditForm Model="Model" Enhance FormName="sideoption" OnValidSubmit="SaSaveOptionAsync">
+                <DataAnnotationsValidator />
+                <input type="hidden" value="@Model.Id" name="Model.Id" />
+                @if (!string.IsNullOrWhiteSpace(_errorMessage))
+                {
+                    <div class="mb-3 text-danger">
+                        <small>@_errorMessage</small>
+                        
+                    </div>
+                }
+                <div class="mb-3">
+                    <label class="form-label">Tên: </label>
+                    <InputText @bind-Value="Model.Name" class="form-control" placeholder="Tên Side Option" />
+                    <ValidationMessage For="() => Model.Name" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Icon: </label>
+                    <InputText @bind-Value="Model.Icon" class="form-control" placeholder="Icon" />
+                    <ValidationMessage For="() => Model.Icon" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-sm btn-success" disabled="@_isSaving">
+                        @if (_isSaving)
+                        {
+                            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                            <span role="status">Đang tải...</span>
+                        }else{
+                            <span>Lưu</span>
+                        }
+                        
+                    </button>
+                </div>
+            </EditForm>
+        </div>
+        <div class="col-sm-9">
+            <div class="" style="max-height:75vh ; overflow-y: scroll;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Icon</th>
+                            <th>Tên</th>
+                            <th>Icon Css Class</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (_sideoption.Length == 0)
+                        {
+                            <tr>
+                                <td colspan="6">
+                                    <h4 class="text-danger">Chưa có dữ liệu, hãy tạo mới</h4>
+                                </td>
+                            </tr>
+                        }
+                        @foreach (var a in _sideoption)
+                        {
+                            <tr>
+                                <td>@a.Id</td>
+                                <td>
+                                    <i class="@a.Icon text-primary"></i>
+                                </td>
+                                <td>@a.Name</td>
+                                <td>@a.Icon</td>
+                                <td>
+                                    <a href="staff-admin/manage-sideoptions?id=@a.Id" class="btn btn-sm btn-primary">Sửa</a>
+                                   
+                                </td>
+                                <td>
+                                    <form method="post" action="staff-admin/manage-sideoptions/delete/@a.Id">
+                                        <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
+                                    </form>
+                                </td>
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <hr style="height:5px" />
+</div>
+@code {
+    [CascadingParameter]
+    public HttpContext httpContext { get; set; }
+    [SupplyParameterFromForm]
+    private SideOption Model { get; set; } = new();
+
+    [SupplyParameterFromQuery(Name = "id")]
+    private int SideOptionId { get; set; }
+
+    private bool _isSaving;
+    private string? _errorMessage;
+    private SideOption[] _sideoption = [];
+    protected override async Task OnInitializedAsync()
+    {
+        _sideoption = await SideOptionService.GetSideOptionsAsync();
+        if (SideOptionId > 0)
+        {
+            if (HttpMethods.IsGet(httpContext.Request.Method))
+            {
+                var sideOptione = _sideoption.FirstOrDefault(a => a.Id == SideOptionId);
+                if (sideOptione is not null)
+                {
+                    Model = sideOptione;
+                }
+            }
+
+        }
+    }
+    private void EditAnemity(SideOption sideOption) => Model = sideOption; 
+    private async Task SaSaveOptionAsync()
+    {
+        _errorMessage = null;
+        _isSaving = true;
+        await Task.Delay(2000);
+
+        MethodResult < SideOption > result = await SideOptionService.SaveSideOptionAsync(Model.Clone());
+        if (result.IsSuccess)
+        {
+            if (Model.Id == 0)
+            {
+                _sideoption = [.. _sideoption, result.Data];
+            }
+            else
+            {
+                var sideOptione = _sideoption.First(a => a.Id == SideOptionId);
+                sideOptione.Name = result.Data.Name;
+                sideOptione.Icon = result.Data.Icon;
+            }
+            Model = new();
+        }
+        else
+        {
+            _errorMessage = result.ErrorMessage ?? "Lỗi khi tạo sideoption";
+        }
+        _isSaving = false;
+        //NavigationManager.Refresh();
+    }
+}
+
+<style>
+    .footer {
+        margin-top: 0 !important;
+    }
+</style>

@@ -1,0 +1,114 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using HotelBookingWebsite.Components.Account.Shared
+
+@inject ILogger<EditProfileForm> Logger
+@inject IUserService UserService
+
+
+<StatusMessage Message="@_message" />
+<EditForm Model="Input" method="post" OnValidSubmit="EditProfileAsync" FormName="edit-profile" Enhance>
+    <DataAnnotationsValidator />
+
+    <hr />
+    <input type="hidden" value="@Input.Id" name="Input.Id" />
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Input.FirstName" class="form-control" autocomplete="username" aria-required="true" placeholder="Tên" />
+                <label for="email">Tên</label>
+                <ValidationMessage For="() => Input.FirstName" class="text-danger" />
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Input.LastName" class="form-control" autocomplete="username" aria-required="true" placeholder="Họ" />
+                <label for="email">Họ</label>
+                <ValidationMessage For="() => Input.LastName" class="text-danger" />
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="Email" />
+                <label for="email">Email</label>
+                <ValidationMessage For="() => Input.Email" class="text-danger" />
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Input.ContactNumber" class="form-control" placeholder="Số điện thoại" />
+                <label for="password">Số điện thoại</label>
+                <ValidationMessage For="() => Input.ContactNumber" class="text-danger" />
+            </div>
+        </div>
+        @if(Role.HasValue && Role != RoleType.Guest)
+        {
+            <div class="col-sm-6">
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="Input.Designation" class="form-control" placeholder="Chức vụ" />
+                    <label for="confirm-password">Chức vụ</label>
+                    <ValidationMessage For="() => Input.Designation" class="text-danger" />
+                </div>
+            </div>
+        }
+        else
+        {
+            <input type="hidden" value="@Input.Designation" name="Input.Designation" />
+        }
+
+    </div>
+
+    <div>
+        <button type="submit" class="w-100 btn btn-lg btn-primary">Cập nhật trang cá nhân</button>
+    </div>
+   
+</EditForm>
+
+@code {
+    [CascadingParameter]
+    public HttpContext httpContext { get; set; }
+    [Parameter, EditorRequired]
+    public string? UserId { get; set; }
+    [Parameter]
+    public RoleType? Role { get; set; }
+    [Parameter]
+    public EventCallback OnSuccess { get; set; }
+
+    [SupplyParameterFromForm]
+    private MyProfileModel Input { get; set; } = new();
+
+    private string? _message = null; // => identityErrors is null ? null : $"Error: {string.Join(", ", identityErrors.Select(error => error.Description))}";
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (HttpMethods.IsGet(httpContext.Request.Method))
+        {
+            var model = await UserService.GetProfileDetailsAsync(UserId);
+            if (model is null)
+            {
+                _message = "Người dùng không tồn tại";
+                return;
+            }
+            Input = model;
+        }
+       
+
+
+    }
+    public async Task EditProfileAsync(EditContext editContext)
+    {
+        var result = await UserService.UpdateProfileAsync(Input,Role);
+        if (!result.IsSuccess)
+        {
+            _message = result.ErrorMessage;
+            return;
+        }
+
+
+        Logger.LogInformation("Cập nhật nhân viên thành công");
+
+        await OnSuccess.InvokeAsync();
+    }
+
+
+
+}

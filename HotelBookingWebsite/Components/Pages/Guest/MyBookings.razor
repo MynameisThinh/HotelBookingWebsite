@@ -1,0 +1,196 @@
+﻿@page "/guest/my-bookings"
+@using Microsoft.AspNetCore.Components.QuickGrid
+
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@inject IBookingService BookingService
+@inject IJSRuntime JsRunTime
+@inject IPaymentService PaymentService
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthStateProvider
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>
+            Sổ đặt phòng của tôi
+        </h1>
+      
+    </div>
+    <hr />
+    <div class="row">
+       <div class="col-sm-8">
+
+       </div>
+       <div class="col-sm-4">
+           <div class="d-flex justify-content-end">
+               <input type="radio" class="btn-check" name="bookings-type" id="upcoming" checked="@(_selectedBookingType == BookingDisplayType.Upcoming)"
+                       @onchange="() => ChangeBookingTypeAsync(BookingDisplayType.Upcoming)" />
+                <label class="btn btn-outline-primary" for="upcoming" >Danh sách đặt phòng upcoming</label>
+                <input type="radio" class="btn-check" name="bookings-type" id="ongoing" checked="@(_selectedBookingType == BookingDisplayType.Ongoing)"
+                       @onchange="() => ChangeBookingTypeAsync(BookingDisplayType.Ongoing)" />
+                <label class="btn btn-outline-primary" for="ongoing">Danh sách đặt phòng đang chờ</label>
+                <input type="radio" class="btn-check" name="bookings-type" id="past" checked="@(_selectedBookingType == BookingDisplayType.Past)"
+                       @onchange="() => ChangeBookingTypeAsync(BookingDisplayType.Past)" /> 
+                <label class="btn btn-outline-primary" for="past">Danh sách đặt phòng lần trước</label>
+           </div>
+       </div>
+    </div>
+    <div class="table-responsive">
+        @if (_NoDataFound)
+        {
+                <h3 class="text-danger">Danh sách trống</h3>
+        }
+        <QuickGrid ItemsProvider="_bookingProviders" @ref="_bookingsGrid" Pagination="_paginationState" Class="table table-striped">
+           
+            <PropertyColumn Property="b => b.Id" />
+                <PropertyColumn Property="b => b.RoomTypeName" Title="Loại phòng" />
+                <TemplateColumn Title="Số phòng">
+                    @if (context.RoomId is null)
+                    {
+                        <label class="d-block"> Không có phòng đăng ký</label>
+
+                    }
+
+                    else
+                    {
+                        <label class="d-block">@context.RoomNumber</label>
+                    }
+                </TemplateColumn>
+                <PropertyColumn Property="b => b.BookedOn" Title="Đặt" Format="dd-MMM-yyyy hh:mm:ss" />
+                <PropertyColumn Property="b => b.CheckInDate" Title="Check-in" Format="dd-MMM-yyyy" />
+                <PropertyColumn Property="b => b.CheckOutDate" Title="Check-out" Format="dd-MMM-yyyy" />
+                <PropertyColumn Property="b => b.Adult" />
+                <PropertyColumn Property="b => b.Children" />
+                <PropertyColumn Property="b => b.SpecialRequest" Title="Yêu cầu khác" />
+                <PropertyColumn Property="b => b.Status" />
+                <PropertyColumn Property="b => b.Remarks" />
+                <TemplateColumn Class="grid-action-column">
+
+                     <button type="button" class="btn btn-sm btn-primary" disabled="@(!context.CanMakePayment)" @onclick="() => MakePaymentAsync(context)">Đặt ngay</button>
+                <button type="button" class="btn btn-sm btn-primary" disabled="@(!context.CanCancel)" @onclick="() => CancelBookingAsync(context)">Hủy</button>
+                </TemplateColumn>
+           
+        </QuickGrid>
+    </div>
+    <Paginator State="_paginationState" />
+</div>
+
+@if (_isLoading)
+{
+    <Loader LoadingText="@_loadingText" />
+}
+
+
+<style type="text/css" scoped>
+    .grid-action-column {
+        min-width: 190px
+    }
+</style>
+
+@code {
+    private BookingDisplayType _selectedBookingType = BookingDisplayType.Upcoming;
+
+    private bool _isLoading;
+    private string _loadingText = "";
+    private GridItemsProvider<BookingDisplayModel>? _bookingProviders;
+    private QuickGrid<BookingDisplayModel> _bookingsGrid;
+    private PaginationState _paginationState = new PaginationState { ItemsPerPage = PageSize };
+
+
+    private bool _NoDataFound;
+    private const int PageSize = 10;
+
+
+    protected override void OnInitialized()
+    {
+        _bookingProviders = async (GridItemsProviderRequest<BookingDisplayModel> request) =>
+        {
+            _loadingText = "Đang lấy dữ liệu";
+            _isLoading = true;
+
+            StateHasChanged();
+
+            var guestId = await GetUserIdAsync();
+            if(guestId is null)
+
+                return default;
+
+            //fetch booking from db
+            var result = await BookingService.GetBookingForGuestAsync(guestId, _selectedBookingType, request.StartIndex, request.Count ?? PageSize);
+            _isLoading = false;
+            StateHasChanged();
+            _NoDataFound = result.totalCount == 0;
+            return GridItemsProviderResult.From<BookingDisplayModel>(result.Records, result.totalCount);
+        };
+    }
+
+    private async Task ChangeBookingTypeAsync(BookingDisplayType type)
+    {
+        _selectedBookingType = type;
+        await _bookingsGrid.RefreshDataAsync();
+    }
+    private async Task AlertAsync(string message) => await JsRunTime.InvokeVoidAsync("window.alert", message);
+    private async Task<bool> ConfirnAsync(string message) => await JsRunTime.InvokeAsync<bool>("window.confirm", message);
+
+    private async Task<string?> GetUserIdAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        if (authState.User?.Identity?.IsAuthenticated == true)
+        {
+            return authState.User.GetUserId();
+        }
+        NavigationManager.NavigateTo("/account/login");
+        return null;
+    }
+
+    private async Task MakePaymentAsync(BookingDisplayModel booking)
+    {
+        if (booking.CanMakePayment)
+        {
+            var userId = await GetUserIdAsync();
+            if (userId is null)
+                return;
+
+            _loadingText = "Đang tải";
+            _isLoading = true;
+
+
+            var domain = NavigationManager.BaseUri.TrimEnd('/');
+            var noOfDays = booking.CheckOutDate.DayNumber - booking.CheckInDate.DayNumber;
+            var paymentModel = new PaymentModel(booking.Id, booking.RoomTypeName, noOfDays, booking.TotalAmount);
+            var paymentUrl = await PaymentService.GeneratePaymentUrl(paymentModel, userId, domain);
+
+            NavigationManager.NavigateTo(paymentUrl);
+        }
+    }
+
+    private async Task CancelBookingAsync(BookingDisplayModel _booking)
+    {
+        if (_booking.CanCancel)
+        {
+            if (await JsRunTime.ConfirnAsync("Bạn có chắc bạn muốn hủy đặt phòng không ?"))
+            {
+                var userId = await GetUserIdAsync();
+                if (userId is null)
+                    return;
+
+                var reason = await JsRunTime.InvokeAsync<string?>("window.prompt", "Nguyên do hủy đặt : ");
+                if (string.IsNullOrWhiteSpace(reason))
+                {
+                    await JsRunTime.AlertAsync("Yêu cầu điền lý do hủy đặt phòng ");
+                    return;
+                }
+                var result = await BookingService.CancelBookingAsync(_booking.Id, reason,userId);
+
+                if (!result.IsSuccess)
+                {
+                    await JsRunTime.AlertAsync(result.ErrorMessage ?? "Lỗi khi hủy đặt phòng");
+                    return;
+                }
+                else
+                {
+                    await _bookingsGrid.RefreshDataAsync();
+                }
+            }
+        }
+    }
+}

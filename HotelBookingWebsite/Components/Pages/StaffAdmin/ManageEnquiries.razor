@@ -1,0 +1,61 @@
+﻿@page "/staff-admin/manage-enquiries"
+@using HotelBookingWebsite.Data.Entities
+@using Microsoft.AspNetCore.Components.QuickGrid
+
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@inject IEnquiryService EnquiryService
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>
+            Quản lý biểu mẫu
+        </h1>
+
+    </div>
+    <hr />
+    <div class="table-responsive">
+        <QuickGrid ItemsProvider="_enquiriesProvider" @ref="_enquiriesGrid" Pagination="_paginationState" Class="table table-striped">
+            <PropertyColumn Property="b => b.Id" />
+            <PropertyColumn Property="b => b.Name"  />
+            <PropertyColumn Property="b => b.Email"  />
+            <PropertyColumn Property="b => b.Subject"/>
+            <PropertyColumn Property="b => b.Message"  />
+            <PropertyColumn Property="b => b.EnquireOn" Title="Enquire On" Format="dd-MMM-yyyy hh:mm:ss" />
+        </QuickGrid>
+    </div>
+    <Paginator State="_paginationState" />
+</div>
+
+@if (_isLoading)
+{
+    <Loader LoadingText="Đang tải" />
+}
+
+
+@code {
+    private bool _isLoading;
+    private GridItemsProvider<Enquiry>? _enquiriesProvider;
+    private QuickGrid<Enquiry> _enquiriesGrid;
+    private PaginationState _paginationState = new PaginationState { ItemsPerPage = PageSize };
+
+    private const int PageSize = 10;
+
+
+    protected override void OnInitialized()
+    {
+        _enquiriesProvider = async (GridItemsProviderRequest<Enquiry> request) =>
+        {
+            _isLoading = true;
+            StateHasChanged();
+
+            //fetch booking from db
+            var result = await EnquiryService.GetEnquiriesAsync(request.StartIndex, request.Count ?? PageSize);
+            _isLoading = false;
+            StateHasChanged();
+
+            return GridItemsProviderResult.From<Enquiry>(result.Records, result.totalCount);
+        };
+    }
+
+
+}

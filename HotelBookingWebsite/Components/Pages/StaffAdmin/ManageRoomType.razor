@@ -1,0 +1,62 @@
+﻿@page "/staff-admin/manage-room-types"
+
+@inject IRoomTypeService RoomTypeService
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center">
+        <h1 class="m-0">Quản lý loại phòng</h1>
+        <NavLink href="staff-admin/manage-room-types/news" class="btn btn-sm btn-primary">+ Thêm loại phòng</NavLink>
+
+    </div>
+    <hr/>
+    <div class="row">
+        @if(_roomType.Length == 0)
+        {
+            <p>Không có loại phòng nào được tạo</p>
+        }
+        else
+        {
+            @foreach(var a in _roomType)
+            {
+                var editLink = $"staff-admin/manage-room-types/{a.Id}/edit";
+                var manageRoomsLink = $"staff-admin/manage-room-types/{a.Id}/rooms?name={a.Name}";
+
+                <div class="col-sm-3">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h6 class="m-0">@a.Name</h6>
+                            <NavLink href="@editLink" class="btn btn-sm btn-default">
+                                <i class="fa fa-edit"></i>
+                            </NavLink>
+                        </div>
+                        <div class="card-body">
+                            <img src="@a.Image" class="img-fluid" />
+                        </div>
+                        <div class="card-footer d-flex justify-content-between align-items-center">
+                            <small>@a.Name</small>
+                            <h12>@a.Price.ToString("c")/đêm</h12>
+                            <NavLink href="@manageRoomsLink" class="btn btn-sm btn-default">
+                                <i class="fa fa-list"><small class="ms-2">Phòng</small></i>
+                            </NavLink>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@code {
+    private RoomTypeListModel[] _roomType = [];
+    protected override async Task OnInitializedAsync()
+    {
+        _roomType = await RoomTypeService.GetRoomTypeForManagePageAsync();
+        
+    }
+}
+
+<style>
+    .footer {
+        margin-top: 0 !important;
+    }
+</style>

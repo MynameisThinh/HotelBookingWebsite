@@ -1,0 +1,36 @@
+﻿@page "/admin/manage-staff/new"
+@page "/admin/manage-staff/{id}/edit"
+@inject NavigationManager NavigationManager
+
+<div class="container">
+    <div class="d-flex align-items-center">
+        <h1>
+            <NavLink href="admin/manage-staff" class="me-2 btn btn-sm btn-default">
+                <i class="fa fa-arrow-left"></i>
+            </NavLink>
+            @(!string.IsNullOrWhiteSpace(Id) ? "Cập nhật" : "Tạo") Tạo nhân viên
+        </h1>
+         
+    </div>
+    <hr />
+
+    <div class="row d-flex justify-content-center">
+        <div class="col-sm-7">
+            @if (string.IsNullOrWhiteSpace(Id))
+            {
+                <CreateUserForm Role="@RoleType.Staff" OnSuccess="HandleRegisterSuccess" />
+            }else{
+                <EditProfileForm UserId="@Id" Role="RoleType.Staff" OnSuccess="HandleRegisterSuccess" />
+            }
+           
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public string? Id{ get; set; }
+    private void HandleRegisterSuccess() => NavigationManager.NavigateTo("admin/manage-staff");
+    
+}

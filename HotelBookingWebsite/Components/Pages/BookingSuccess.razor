@@ -1,0 +1,53 @@
+﻿@page "/bookings/{bookingId:long}/success"
+@layout InnerPageLayout 
+@inject IPaymentService PaymentService
+
+<div class="container d-flex justify-content-center mt-5">
+    <div>
+        @if (!string.IsNullOrWhiteSpace(_errorMessage))
+        {
+            <h3 class="text-danger">
+                @_errorMessage
+            </h3>
+        }
+        else
+        {
+            <h3>Chào, @_guestname,</h3>
+            <p>Thanh toán đã thực hiện</p>
+            <p>Bạn sẽ nhận được thông tin phòng</p>
+        }
+
+    </div>
+</div>
+
+
+
+
+
+@code {
+    [Parameter]
+    public long BookingId { get; set; }
+    [SupplyParameterFromQuery(Name = "session-id")]
+    public string CheckoutSessionId { get; set;  }
+
+    [SupplyParameterFromQuery(Name = "payment-id")]
+    public string PaymentId { get; set; }
+
+    private string? _guestname;
+    private string? _errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    
+    {
+        //https://localhost:7270/bookings/15/success?session-id=cs_test_a1Kalrg4QFVVu6cx5BdyBxqRKZnW7NY9vG5Xlt7xuoPizNDfdmGJeqpLV5&payment-id=03579ab6-61ee-40da-98b4-08dca1bb5529
+        var result = await PaymentService.ConfirmPaymentAsync(PaymentId, BookingId, CheckoutSessionId);
+        if (result.IsSuccess)
+        {
+            _guestname = result.Data;
+        }
+        else
+        {
+            _errorMessage = result.ErrorMessage ?? "Không thể xác nhận thanh toán";
+        }
+    }
+}

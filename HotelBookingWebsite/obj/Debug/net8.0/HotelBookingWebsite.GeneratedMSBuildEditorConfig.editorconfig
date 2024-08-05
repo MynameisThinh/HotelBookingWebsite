@@ -1,0 +1,235 @@
+is_global = true
+build_property.TargetFramework = net8.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = HotelBookingWebsite
+build_property.RootNamespace = HotelBookingWebsite
+build_property.ProjectDir = D:\HotelBookingWebsite\HotelBookingWebsite\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 8.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = D:\HotelBookingWebsite\HotelBookingWebsite
+build_property._RazorSourceGeneratorDebug = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Account/Shared/AccountLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBY2NvdW50XFNoYXJlZFxBY2NvdW50TGF5b3V0LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Account/Shared/RedirectToLogin.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBY2NvdW50XFNoYXJlZFxSZWRpcmVjdFRvTG9naW4ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Account/Shared/StatusMessage.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBY2NvdW50XFNoYXJlZFxTdGF0dXNNZXNzYWdlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/App.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBcHAucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Layout/AdminLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcQWRtaW5MYXlvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Layout/InnerPageLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcSW5uZXJQYWdlTGF5b3V0LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Pages/About.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBYm91dC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Pages/Admin/ManageStaff.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBZG1pblxNYW5hZ2VTdGFmZi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Pages/Admin/SaveStaff.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBZG1pblxTYXZlU3RhZmYucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Pages/Admin/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBZG1pblxfSW1wb3J0cy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Pages/Auth.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBdXRoLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Pages/Booking.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xCb29raW5nLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Pages/BookingCancel.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xCb29raW5nQ2FuY2VsLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Pages/BookingSuccess.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xCb29raW5nU3VjY2Vzcy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Pages/Contact.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDb250YWN0LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Pages/Counter.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDb3VudGVyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Pages/Error.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFcnJvci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Pages/Guest/MyBookings.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xHdWVzdFxNeUJvb2tpbmdzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Pages/Guest/_Import.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xHdWVzdFxfSW1wb3J0LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Pages/Home.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xIb21lLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Pages/PostAuthPages/ChangePassword.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xQb3N0QXV0aFBhZ2VzXENoYW5nZVBhc3N3b3JkLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Pages/PostAuthPages/MyProfile.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xQb3N0QXV0aFBhZ2VzXE15UHJvZmlsZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Pages/PostAuthPages/_Import.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xQb3N0QXV0aFBhZ2VzXF9JbXBvcnQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Pages/Rooms.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSb29tcy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Pages/Services.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTZXJ2aWNlcy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Pages/StaffAdmin/ManageBooking.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTdGFmZkFkbWluXE1hbmFnZUJvb2tpbmcucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Pages/StaffAdmin/ManageEnquiries.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTdGFmZkFkbWluXE1hbmFnZUVucXVpcmllcy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Pages/StaffAdmin/ManageRoom.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTdGFmZkFkbWluXE1hbmFnZVJvb20ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Pages/StaffAdmin/ManageRoomType.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTdGFmZkFkbWluXE1hbmFnZVJvb21UeXBlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Pages/StaffAdmin/ManageSideOptions.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTdGFmZkFkbWluXE1hbmFnZVNpZGVPcHRpb25zLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Pages/StaffAdmin/ManageSubscribers.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTdGFmZkFkbWluXE1hbmFnZVN1YnNjcmliZXJzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Pages/StaffAdmin/SaveRoomType.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTdGFmZkFkbWluXFNhdmVSb29tVHlwZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Pages/StaffAdmin/_Inports.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTdGFmZkFkbWluXF9JbnBvcnRzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Pages/Weather.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xXZWF0aGVyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Routes.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xSb3V0ZXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Shared/AboutSection.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcQWJvdXRTZWN0aW9uLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Shared/CreateUserForm.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcQ3JlYXRlVXNlckZvcm0ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Shared/Dialog.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcRGlhbG9nLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Shared/EditProfileForm.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcRWRpdFByb2ZpbGVGb3JtLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Shared/FilterSection.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcRmlsdGVyU2VjdGlvbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Shared/Footer.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcRm9vdGVyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Shared/Header.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcSGVhZGVyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Shared/HomeCarousel.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcSG9tZUNhcm91c2VsLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Shared/Loader.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcTG9hZGVyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Shared/Newsletter.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcTmV3c2xldHRlci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Shared/RoomsSection.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcUm9vbXNTZWN0aW9uLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Shared/ServicesSection.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcU2VydmljZXNTZWN0aW9uLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Shared/Teams.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcVGVhbXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Shared/Testimonials.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcVGVzdGltb25pYWxzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Shared/UsersList.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcVXNlcnNMaXN0LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Shared/Video.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcVmlkZW8ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xfSW1wb3J0cy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Layout/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTWFpbkxheW91dC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-e9p4ci49sy
+
+[D:/HotelBookingWebsite/HotelBookingWebsite/Components/Layout/NavMenu.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTmF2TWVudS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-9owdgg9w9w

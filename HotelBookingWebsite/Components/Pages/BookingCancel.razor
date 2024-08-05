@@ -1,0 +1,37 @@
+﻿@page "/bookings/{bookingId:long}/cancel"
+@layout InnerPageLayout
+
+@inject IPaymentService PaymentService
+
+<div class="container d-flex justify-content-center mt-5">
+    <div>
+        @if (_errorMessage == null)
+        {
+            <p>Thanh toán bị hủy</p>
+        }
+        else
+        {
+            <p class="text-danger">@_errorMessage</p>
+        }
+    </div>
+</div>
+@code {
+    [Parameter]
+    public long BookingId { get; set; }
+
+    [SupplyParameterFromQuery(Name = "session-id")]
+    public string CheckoutSessionId { get; set; }
+    [SupplyParameterFromQuery(Name = "payment-id")]
+    public string PaymentId { get; set; }
+
+    private string? _errorMessage = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await PaymentService.CancelPaymentAsync(PaymentId,BookingId,CheckoutSessionId);
+        if (!result.IsSuccess)
+        {
+            _errorMessage = result.ErrorMessage;
+        }
+    }
+}

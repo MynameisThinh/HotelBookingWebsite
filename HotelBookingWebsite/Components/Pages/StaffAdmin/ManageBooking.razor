@@ -1,0 +1,210 @@
+﻿@page "/staff-admin/manage-bookings"
+@using HotelBookingWebsite.Data.Entities
+@using Microsoft.AspNetCore.Components.QuickGrid
+
+@inject IRoomTypeService RoomTypeService
+@inject IBookingService BookingService
+@inject IJSRuntime JsRunTime
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>
+            Quản lý phòng
+        </h1>
+      
+    </div>
+    <hr />
+    <div class="table-responsive">
+        <QuickGrid ItemsProvider="_bookingProviders" @ref="_bookingsGrid" Pagination="_paginationState" Class="table table-striped">
+            <PropertyColumn Property="b => b.Id" />
+            <PropertyColumn Property="b => b.RoomTypeName" Title="Loại phòng" />
+            <TemplateColumn Title="Số phòng">
+                @if (context.RoomId is null)
+                {
+                    <label class="d-block"> Không có phòng đăng ký</label>
+                    @if (context.IsRoomNumberAssign)
+                    {
+                        <button type="button" class="btn btn-sm btn-primary" @onclick="() => OpenAssignRoomModalAsync(context)">Đăng ký số phòng</button>
+                    }
+                    else
+                    {
+                        <small>Có thể đăng ký sau khi thanh toán.</small>
+                    }
+                }
+
+                else
+                {
+
+                    <button type="button" class="btn btn-sm btn-primary" @onclick="() => OpenAssignRoomModalAsync(context)">@context.RoomNumber</button>
+                }
+            </TemplateColumn>
+
+            <PropertyColumn Property="b => b.GuestName" Title="Khách" />
+            <PropertyColumn Property="b => b.BookedOn" Title="Đặt" Format="dd-MMM-yyyy hh:mm:ss" />
+            <PropertyColumn Property="b => b.CheckInDate" Title="Check-in" Format="dd-MMM-yyyy" />
+            <PropertyColumn Property="b => b.CheckOutDate" Title="Check-out" Format="dd-MMM-yyyy" />
+            <PropertyColumn Property="b => b.Adult" />
+            <PropertyColumn Property="b => b.Children" />
+            <PropertyColumn Property="b => b.SpecialRequest" Title="Yêu cầu khác" />
+            <PropertyColumn Property="b => b.Status" />
+            <PropertyColumn Property="b => b.Remarks" />
+            <TemplateColumn Class="grid-action-column">
+
+                <button type="button" class="btn btn-sm btn-primary" disabled="@(!context.CanApproved)" @onclick="() => ApproveBookingAsync(context)">Chấp nhận</button>
+                <button type="button" class="btn btn-sm btn-primary" disabled="@(!context.CanCancel)" @onclick="() => CancelBookingAsync(context)">Hủy</button>
+            </TemplateColumn>
+
+
+        </QuickGrid>
+    </div>
+    <Paginator State="_paginationState"/>
+</div>
+
+@if (_isLoading)
+{
+    <Loader LoadingText="Đang tải" />
+}
+
+<Dialog DialogId="assign-room-to-booking" Show="_booking is not null" Title="Đăng ký/Đổi phòng" OnCloseModal="HandleAssignRoom">
+    <div>
+        <div class="mb-3">
+        <label class="form-label">Số phòng :</label>
+        <select @bind="_selectedRoomId" class="form-control">
+            <option value="0">Chọn phòng</option>
+            @foreach (var room in _rooms)
+            {
+                <option value="@room.ID">@room.RoomNumber</option>
+            }
+        </select>
+        </div>
+        <div class="mb-3">
+            <button type="button" class="btn btn-sm btn-primary" @onclick="AssignRoomAsync">Lưu</button>
+        </div>
+       
+    </div>
+
+</Dialog>
+
+<style type="text/css" scoped>
+    .grid-action-column{
+        min-width:190px
+    }
+ </style>
+
+@code{
+    private bool _isLoading;
+    private GridItemsProvider<BookingDisplayModel>? _bookingProviders;
+    private QuickGrid<BookingDisplayModel> _bookingsGrid;
+    private PaginationState _paginationState = new PaginationState { ItemsPerPage = PageSize };
+
+    private const int PageSize = 10;
+    private BookingDisplayModel? _booking;
+
+    private Room[] _rooms = [];
+    private int _selectedRoomId;
+
+    protected override void OnInitialized()
+    {
+        _bookingProviders = async (GridItemsProviderRequest<BookingDisplayModel> request) =>
+        {
+            _isLoading = true;
+            StateHasChanged();
+
+            //fetch booking from db
+            var result = await BookingService.GetBookingAsync(request.StartIndex, request.Count ?? PageSize);
+            _isLoading = false;
+            StateHasChanged();
+
+            return GridItemsProviderResult.From<BookingDisplayModel>(result.Records, result.totalCount);
+        };
+    }
+
+    private async Task OpenAssignRoomModalAsync(BookingDisplayModel booking)
+    {
+        var rooms = await RoomTypeService.GetRoomsAsync(booking.RoomTypeId);
+        if (rooms is null || rooms.Length == 0)
+        {
+            await JsRunTime.AlertAsync("Không có phòng cho loại phòng này");
+            return;
+        }
+        if(!rooms.Any(a => a.IsAvailable))
+        {
+            await JsRunTime.AlertAsync("Không có tên phòng của loại phòng này");
+            return;
+        }
+        _rooms = rooms.Where(r => r.IsAvailable).ToArray();
+        _booking = booking;
+    }
+    private void HandleAssignRoom()
+    {
+        _rooms = [];
+        _booking = null;
+        _selectedRoomId = 0;
+    }
+
+    private async Task AssignRoomAsync()
+    {
+        if (_booking is not null && _selectedRoomId > 0)
+        {
+            var result = await RoomTypeService.AssignRoomBookingAsync(_booking.Id, _selectedRoomId);
+            if (!result.IsSuccess)
+            {
+                await JsRunTime.AlertAsync($"Lỗi khi đăng ký/đổi phòng. {result.ErrorMessage}");
+                return;
+            }
+
+            HandleAssignRoom();
+            await _bookingsGrid.RefreshDataAsync();
+        }
+    }
+
+    private async Task ApproveBookingAsync(BookingDisplayModel _booking)
+    {
+        if (_booking.CanApproved)
+        {
+            if (await JsRunTime.ConfirnAsync("Bạn có chắc bạn muốn chấp thuận đặt phòng không ?"))
+            {
+                var result = await BookingService.ApproveBookingAsync(_booking.Id);
+                if (!result.IsSuccess)
+                {
+                    await JsRunTime.AlertAsync(result.ErrorMessage ?? "Lỗi khi chấp thuận đặt phòng");
+                    return;
+                }
+                else
+                {
+                    await _bookingsGrid.RefreshDataAsync();
+                }
+            }
+        }
+    }
+
+    private async Task CancelBookingAsync(BookingDisplayModel _booking)
+    {
+        if (_booking.CanCancel)
+        {
+            if (await JsRunTime.ConfirnAsync("Bạn có chắc bạn muốn hủy đặt phòng không ?"))
+            {
+                var reason = await JsRunTime.PromptAsync("Nguyên do hủy đặt : ");
+                if (string.IsNullOrWhiteSpace(reason))
+                {
+                    await JsRunTime.AlertAsync("Yêu cầu điền lý do hủy đặt phòng ");
+                    return;
+                }
+                var result = await BookingService.CancelBookingAsync(_booking.Id, reason);
+
+                if (!result.IsSuccess)
+                {
+                    await JsRunTime.AlertAsync(result.ErrorMessage ?? "Lỗi khi hủy đặt phòng");
+                    return;
+                }
+                else
+                {
+                    await _bookingsGrid.RefreshDataAsync();
+                }
+            }
+        }
+    }
+
+}
+

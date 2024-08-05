@@ -1,0 +1,22 @@
+﻿@page "/"
+
+@inject IRoomsService RoomsService
+<PageTitle>Home</PageTitle>
+<HomeCarousel />
+<AboutSection ShowButton/>
+<RoomsSection RoomTypes="_rooms" />
+<Video />
+<ServicesSection  />
+<Testimonials />
+<Teams />
+
+<Newsletter />
+
+@code{
+    private RoomTypeModel[] _rooms = [];
+    protected override async Task OnInitializedAsync()
+    {
+        _rooms = await RoomsService.GetRoomTypesAsync(3);
+    }
+}
+

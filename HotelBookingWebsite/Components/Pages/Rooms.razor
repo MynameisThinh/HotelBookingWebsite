@@ -1,0 +1,30 @@
+﻿@page "/rooms"
+
+@layout InnerPageLayout
+
+@inject IRoomsService RoomsService
+
+<Microsoft.AspNetCore.Components.Sections.SectionContent SectionName="PageName">
+    Phòng
+</Microsoft.AspNetCore.Components.Sections.SectionContent>
+
+<RoomsSection RoomTypes="_rooms" />
+
+<Testimonials />
+@code {
+    [SupplyParameterFromQuery]
+    public DateOnly? CheckInDate { get; set; } = null;
+    [SupplyParameterFromQuery]
+    public DateOnly? CheckOutDate { get; set; } = null;
+    [SupplyParameterFromQuery]
+    public int? Adults { get; set; } = 0;
+    [SupplyParameterFromQuery]
+    public int? Children { get; set; } = 0;
+
+    private RoomTypeModel[] _rooms = [];
+    protected override async Task OnInitializedAsync()
+    {
+        var filterModel = FilterModel.GetFilterModel(CheckInDate, CheckOutDate, Adults, Children);
+        _rooms = await RoomsService.GetRoomTypesAsync(filter : filterModel);
+    }
+}

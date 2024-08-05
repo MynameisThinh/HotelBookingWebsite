@@ -1,0 +1,152 @@
+﻿@page "/staff-admin/manage-room-types/{roomTypeId:int}/rooms"
+@using HotelBookingWebsite.Data.Entities
+@inject NavigationManager NavigationManager
+@inject IRoomTypeService RoomTypeService
+
+@inject IJSRuntime JsRunTime
+
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>
+            <NavLink href="staff-admin/manage-room-types" class="me-2 btn btn-sm btn-default">
+               <i class="fa fa-arrow-left"></i>    
+            </NavLink>
+            Quản lý phòng<small> [@Name]</small>
+        </h1>
+        <button type="button" class="btn btn-sm btn-primary" @onclick="() => _showCreateRoomDialog = true">+ Thêm phòng</button>
+    </div>
+    <hr />
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Số phòng</th>
+                    <th>Có sẵn</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if(_rooms.Length == 0)
+                {
+                    <tr>
+                        <td colspan="3">
+                            <h4 class="text-danger">Không có phòng nào</h4>
+                        </td>
+                    </tr>
+                }
+                @foreach (var a in _rooms)
+                {
+                    <tr>
+                        <td>@a.RoomNumber</td>
+                        <td>
+                            <label>
+                                @if (a.IsAvailable)
+                                {
+                                    <input type="checkBox" @onchange="() => HandleIsAvailableChange(a)"/>
+                                    <span class="text-success">Đồng ý</span>
+
+                                }
+                                else
+                                {
+                                    <input type="checkBox" checked @onchange="() => HandleIsAvailableChange(a)" />
+                                    <span class="text-danger">Không</span>
+                                }
+                            </label>
+                           
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-sm btn-danger" @onclick="() => DeleteRoomAsync(a.ID)">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<Dialog Title="Tạo phòng" 
+        DialogId="@dialogId" 
+        Show="_showCreateRoomDialog" 
+        OnCloseModal="() => _showCreateRoomDialog = false"> 
+     <EditForm Model="_createRoomModel" OnValidSubmit="CreateRoomAsync">
+        <DataAnnotationsValidator />
+        <div class="mb-3">
+            <label class="form-label">Số phòng :</label>
+            <InputText @bind-Value="_createRoomModel.RoomNumber" class="form-control form-control-sm" placeholder="Nhập số phòng" />
+            <ValidationMessage For="() => _createRoomModel.RoomNumber" class="text-danger" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">
+                <InputCheckbox @bind-Value="_createRoomModel.IsAvailable" />
+                IsAvailabe
+            </label>
+        </div>
+        <div class="mb-3">
+            <button type="submit" class="btn btn-sm btn-primary">Tạo phòng</button>
+        </div>
+    </EditForm>
+</Dialog>
+
+@code {
+    [Parameter]
+    public int RoomTypeId { get; set; }
+    private short _roomTypeId = 0;
+    [SupplyParameterFromQuery]
+    public string Name { get; set; }
+    private const string dialogId = "create-room-dialog";
+    private Room[] _rooms = [];
+    private Room _createRoomModel = new();
+    public bool _showCreateRoomDialog;
+    protected override async Task OnInitializedAsync()
+    {
+        if (RoomTypeId <= 0 || !short.TryParse(RoomTypeId.ToString(),out var roomTypeId))
+        {
+            NavigationManager.NavigateTo("/staff-admin/manage-room-types", replace: true);
+            return;
+        }
+        _roomTypeId = roomTypeId;
+        _rooms = await RoomTypeService.GetRoomsAsync(roomTypeId);
+    }
+
+    private async Task CreateRoomAsync()
+    {
+        _createRoomModel.RoomTypeId = _roomTypeId;
+        var result = await RoomTypeService.SaveRoomsAsync(_createRoomModel);
+        if (result.IsSuccess)
+        {
+            _rooms = [.. _rooms, result.Data];
+            _createRoomModel = new();
+            _showCreateRoomDialog = false;
+        }
+        await JsRunTime.InvokeVoidAsync("window.alert", result.ErrorMessage ?? "Tạo phòng thành công");
+    }
+    // private async Task CloseRoomModal() => await JsRunTime.InvokeVoidAsync("window.closeModal", dialogId);
+    // private async Task OpenCreateRoomModal() => await JsRunTime.InvokeVoidAsync("window.showModal", dialogId);
+
+    private async Task HandleIsAvailableChange(Room room)
+    {
+        room.IsAvailable = !room.IsAvailable;
+        var result = await RoomTypeService.SaveRoomsAsync(room);
+        if (!result.IsSuccess)
+        {
+            room.IsAvailable = !room.IsAvailable;
+            await JsRunTime.InvokeVoidAsync("window.alert", result.ErrorMessage ?? "Lỗi khi đổi phòng");
+        }
+       
+    }
+
+    private async Task DeleteRoomAsync(int id)
+    {
+        var result = await RoomTypeService.DeleteRoomAsync(id);
+        if (result.IsSuccess)
+        {
+            _rooms = _rooms.Where(x => x.ID != id).ToArray();
+            return;
+        }
+        await JsRunTime.InvokeVoidAsync("window.alert", result.ErrorMessage ?? "Lỗi khi xóa phòng");
+    }
+}

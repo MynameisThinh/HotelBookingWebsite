@@ -1,0 +1,46 @@
+﻿@page "/my-profile"
+@using System.Security.Claims
+
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthStateProvider
+<div class="container">
+    <h1>
+        Trang cá nhân của tôi
+    </h1>
+    <hr />
+
+    <div class="row d-flex justify-content-center">
+        <div class="col-sm-7">
+            @if (!string.IsNullOrWhiteSpace(_message))
+            {
+                <p class="text-success">
+                    @_message
+                </p>
+                <hr />
+            }
+            @if(_userId is not null)
+            {
+                <EditProfileForm UserId="@_userId" OnSuccess="HandleSuccess" />
+            }
+            
+        </div>
+    </div>
+</div>
+
+
+@code {
+    private string? _message;
+    private string? _userId;
+    private void HandleSuccess() => _message = "Thông tin cập nhật thành công"; 
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        if(authState is null || authState.User.Identity is null || !authState.User.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+        _userId = authState.User.GetUserId()!;
+    }
+}

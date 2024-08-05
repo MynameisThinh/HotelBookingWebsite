@@ -1,0 +1,38 @@
+﻿@page "/Error"
+@using System.Diagnostics
+
+<PageTitle>Error</PageTitle>
+
+<h1 class="text-danger">Lỗi.</h1>
+<h2 class="text-danger">
+    Đã xảy ra lỗi trong khi xử lý yêu cầu của bạn.
+</h2>
+
+@if (ShowRequestId)
+{
+    <p>
+        <strong>Request ID:</strong> <code>@RequestId</code>
+    </p>
+}
+
+<h3>Môi trường lập trình viên</h3>
+<p>
+    Việc chuyển sang môi trường <strong>Phát triển</strong> sẽ hiển thị thông tin chi tiết hơn về lỗi đã xảy ra.
+</p>
+<p>
+    <strong>Không nên bật môi trường Phát triển cho các ứng dụng đã triển khai.</strong>
+    Nó có thể dẫn đến việc hiển thị thông tin nhạy cảm từ các trường hợp ngoại lệ cho người dùng cuối.
+    Để gỡ lỗi cục bộ, hãy bật môi trường <strong>Phát triển</strong> bằng cách đặt biến môi trường <strong>ASPNETCORE_ENVIRONMENT</strong> thành <strong>Phát triển</strong>
+    và khởi động lại ứng dụng.
+</p>
+
+@code{
+    [CascadingParameter]
+    private HttpContext? HttpContext { get; set; }
+
+    private string? RequestId { get; set; }
+    private bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+
+    protected override void OnInitialized() =>
+        RequestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+}

@@ -1,0 +1,133 @@
+﻿@using HotelBookingWebsite.Constants
+@using Microsoft.Extensions.Options
+
+@implements IDisposable
+@inject NavigationManager NavigationManager
+@inject IOptions<ContactInfoOption> ContactInfoOptions
+
+<!-- Header Start -->
+<div class="container-fluid bg-dark px-0">
+    <div class="row gx-0">
+        <div class="col-lg-3 bg-dark d-none d-lg-block">
+            <a href="/" class="navbar-brand w-100 h-100 m-0 p-0 d-flex align-items-center justify-content-center">
+                <h1 class="m-0 text-primary text-uppercase">HotelLXY</h1>
+            </a>
+        </div>
+        <div class="col-lg-9">
+            <div class="row gx-0 bg-white d-none d-lg-flex">
+                <div class="col-lg-7 px-5 text-start">
+                    <div class="h-100 d-inline-flex align-items-center py-2 me-4">
+                        <i class="fa fa-envelope text-primary me-2"></i>
+                        <p class="mb-0">@_contactOptions.GeneralEmail</p>
+                    </div>
+                    <div class="h-100 d-inline-flex align-items-center py-2">
+                        <i class="fa fa-phone-alt text-primary me-2"></i>
+                        <p class="mb-0">@_contactOptions.ContactNumber</p>
+                    </div>
+                </div>
+                <div class="col-lg-5 px-5 text-end">
+                    <div class="d-inline-flex align-items-center py-2">
+                        <a class="me-3" href="https://www.facebook.com/IAmTh1nh" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                        <a class="me-3" href="https://www.linkedin.com/in/aolamtruongthinh/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                        <a class="me-3" href="https://www.instagram.com/altt25_10/" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a class="me-3" href="https://www.youtube.com/channel/UChZukGVgGIhWAFfJXGLe9tQ" target="_blank"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <nav class="navbar navbar-expand-lg bg-dark navbar-dark p-3 p-lg-0">
+                <NavLink Match="NavLinkMatch.All" href="/" class="navbar-brand d-block d-lg-none">
+                    <h1 class="m-0 text-primary text-uppercase">HotelLXY</h1>
+                </NavLink>
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+                    <div class="navbar-nav mr-auto py-0">
+                        <NavLink Match="NavLinkMatch.All" href="/" class="nav-item nav-link">Trang chủ</NavLink>
+                        <NavLink href="about-us" class="nav-item nav-link">Về chúng tôi</NavLink>
+                        <NavLink href="services" class="nav-item nav-link">Dịch vụ</NavLink>
+                        <NavLink href="rooms" class="nav-item nav-link">Phòng</NavLink>
+                        <NavLink href="booking" class="nav-item nav-link">Đặt phòng</NavLink>
+                        
+                        <NavLink href="contact" class="nav-item nav-link">Liên hệ</NavLink>
+
+                        <AuthorizeView >
+                            <Authorized>
+                                <div class="nav-item dropdown">
+                                    @* <label>@(string.Join(Environment.NewLine,context.User.Claims.Select(c => $"{c.Type}={c.Value}")))</label> *@
+                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">@context.User.FindFirst(AppConstants.CustomClaimTypes.FullName)?.Value</a>
+                                <div class="dropdown-menu rounded-0 m-0">
+
+                                    <NavLink href="my-profile" class="dropdown-item">Tài khoản của tôi</NavLink>
+                                    <AuthorizeView Roles="@RoleType.Guest.ToString()" Context="guestContext">
+                                            <NavLink href="guest/my-bookings" class="dropdown-item">Sổ đặt phòng</NavLink>
+                                    </AuthorizeView>
+                                    <AuthorizeView Roles="Admin" Context="adminContext">
+                                            <NavLink href="admin/manage-staff" class="dropdown-item">Quản lý nhân sự</NavLink>
+                                            <NavLink href="admin/manage-staff/new" class="dropdown-item">+ Thêm nhân sự</NavLink>
+                                    </AuthorizeView>
+                                    <AuthorizeView Roles="Staff,Admin" Context="staffAndadminContext">
+                                            <NavLink href="staff-admin/manage-bookings" class="dropdown-item">Quản lý đặt phòng</NavLink>
+                                        <NavLink href="staff-admin/manage-room-types" Match="NavLinkMatch.All" class="dropdown-item">Quản lý phòng</NavLink>
+                                        <NavLink href="staff-admin/manage-room-types/news" class="dropdown-item">+ Thêm loại phòng</NavLink>
+                                        <NavLink href="staff-admin/manage-sideoptions" class="dropdown-item">Quản lý đồ dùng</NavLink>
+                                            <NavLink href="staff-admin/manage-enquiries" class="dropdown-item">Quản lý biểu mẫu</NavLink>
+                                            <NavLink href="staff-admin/manage-subscribers" class="dropdown-item">Quản lý thành viên</NavLink>
+                                    </AuthorizeView>
+                                    
+                                    <NavLink href="change-password" class="dropdown-item">Đổi mật khẩu</NavLink>
+                                </div>
+                            </div>
+                            </Authorized>
+                            
+                            
+                        </AuthorizeView>
+
+
+                    </div>
+                    <AuthorizeView>
+                        <Authorized>
+                           
+                            <form action="Account/Logout" method="post">
+                                <AntiforgeryToken />
+                                <input type="hidden" name="ReturnUrl" value="@currentUrl" />
+                                <button type="submit" class="btn btn-primary rounded-0 py-4 px-md-5 d-none d-lg-block">
+                                    <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span>
+                                    Đăng xuất <i class="fa fa-arrow-right ms-3"></i>
+                                </button>
+                            </form>
+                        </Authorized>
+                        <NotAuthorized>
+                            <a href="Account/login" class="btn btn-primary rounded-0 py-4 px-md-5 d-none d-lg-block">Đăng nhập  <i class="fa fa-arrow-left me-3"></i></a>
+                        </NotAuthorized>
+                    </AuthorizeView>
+
+                    
+                </div>
+            </nav>
+        </div>
+    </div>
+</div>
+<!-- Header End -->
+
+@code {
+    private string? currentUrl;
+    private ContactInfoOption _contactOptions = new();
+    protected override void OnInitialized()
+    {
+        _contactOptions = ContactInfoOptions.Value;
+        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+}

@@ -1,0 +1,55 @@
+﻿@inject IJSRuntime JsRunTime
+
+<dialog id="@DialogId" style="min-width:300px;">
+    <div class="d-flex justify-content-between align-item-center">
+        <h4 class="m-0">@Title</h4>
+        <button class="btn btn-sm btn-danger" @onclick="HandleCloseModalClickAsync">X</button>
+    </div>
+    <hr />
+    @ChildContent
+</dialog>
+
+<style>
+    ::backdrop {
+        background-color: rgba(224,145,20,0.5);
+    }
+</style>
+
+
+@code {
+    [Parameter,EditorRequired]
+    public bool Show { get; set; }
+
+    [Parameter,EditorRequired]
+    public string Title { get; set; }
+
+    [Parameter, EditorRequired]
+    public string DialogId { get; set; }
+
+    [Parameter,EditorRequired]
+    public EventCallback OnCloseModal { get; set; }
+
+    [Parameter,EditorRequired]
+    public RenderFragment ChildContent { get; set; }
+
+    private bool _showStatus;
+    protected override async Task OnParametersSetAsync()
+    {
+        if(_showStatus != Show)
+        {
+            _showStatus = Show;
+            if (Show)
+                await OpenModalAsync();
+            else
+                await CloseModalAsync();
+        }
+    }
+    private async Task CloseModalAsync() => await JsRunTime.InvokeVoidAsync("window.closeModal", DialogId);
+    private async Task OpenModalAsync() => await JsRunTime.InvokeVoidAsync("window.showModal", DialogId);
+
+    private async Task HandleCloseModalClickAsync()
+    {
+        await CloseModalAsync();
+        await OnCloseModal.InvokeAsync();
+    }
+}

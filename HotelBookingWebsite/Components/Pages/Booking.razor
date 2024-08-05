@@ -1,0 +1,342 @@
+﻿@page "/booking"
+@using HotelBookingWebsite.Data
+
+@rendermode @(new InteractiveServerRenderMode(prerender : false))
+@layout InnerPageLayout
+
+
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IRoomsService RoomsService
+@inject IUserService UserService
+@inject IBookingService BookingService
+@inject IPaymentService PaymentService
+<Microsoft.AspNetCore.Components.Sections.SectionContent SectionName="PageName">
+    Đặt phòng
+</Microsoft.AspNetCore.Components.Sections.SectionContent>
+
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h6 class="section-title text-center text-primary text-uppercase">Room Booking</h6>
+            <h1 class="mb-5">Book A <span class="text-primary text-uppercase">Luxury Room</span></h1>
+        </div>
+        <div class="row g-5">
+            <div class="col-lg-6">
+                <div class="row g-3">
+                    <div class="col-6 text-end">
+                        <img class="img-fluid rounded w-75 wow zoomIn" data-wow-delay="0.1s" src="img/about-1.jpg" style="margin-top: 25%;">
+                    </div>
+                    <div class="col-6 text-start">
+                        <img class="img-fluid rounded w-100 wow zoomIn" data-wow-delay="0.3s" src="img/about-2.jpg">
+                    </div>
+                    <div class="col-6 text-end">
+                        <img class="img-fluid rounded w-50 wow zoomIn" data-wow-delay="0.5s" src="img/about-3.jpg">
+                    </div>
+                    <div class="col-6 text-start">
+                        <img class="img-fluid rounded w-75 wow zoomIn" data-wow-delay="0.7s" src="img/about-4.jpg">
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="wow fadeInUp" data-wow-delay="0.2s">
+                    <EditForm Model="_model" OnValidSubmit="BookRoomAsync">
+                        <DataAnnotationsValidator />
+                        <div class="row g-3">
+                            @if (!_isAuthenticated)
+                            {
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <InputText @bind-Value="_model.FirstName"  class="form-control" id="name" placeholder="Họ" />
+                                        <label for="name">Họ</label>
+                                    </div>
+                                    <ValidationMessage For="()=> _model.FirstName" class="text-danger"/>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <InputText @bind-Value="_model.LastName" class="form-control" id="lastname" placeholder="Tên" />
+                                        <label for="lastname">Tên</label>
+                                    </div>
+                                    <ValidationMessage For="()=> _model.LastName" class="text-danger" />
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <InputText @bind-Value="_model.Email" class="form-control" id="email" placeholder="Email" />
+                                        <label for="email">Tên</label>
+                                    </div>
+                                    <ValidationMessage For="()=> _model.Email" class="text-danger" />
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <InputText @bind-Value="_model.ContactNumber" class="form-control" id="contactnumber" placeholder="Số điện thoại" />
+                                        <label for="contactnumber">Số điện thoại</label>
+                                    </div>
+                                    <ValidationMessage For="()=> _model.ContactNumber" class="text-danger" />
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <InputText type="password" @bind-Value="_model.Password" class="form-control" id="password" placeholder="Mật khẩu" />
+                                        <label for="password">Mật khẩu</label>
+                                    </div>
+                                    <ValidationMessage For="()=> _model.Password" class="text-danger" />
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <InputText type="password" @bind-Value="_model.ConfirmPassword" class="form-control" id="confirmpassword" placeholder="Xác nhận mật khẩu" />
+                                        <label for="confirmpassword">Xác nhận mật khẩu</label>
+                                    </div>
+                                    <ValidationMessage For="()=> _model.ConfirmPassword" class="text-danger" />
+                                </div>
+                            }
+                            
+                            
+                            <div class="col-md-6">
+                                <div class="form-floating date" id="date3" data-target-input="nearest">
+                                     
+                                    <InputDate @bind-Value="_model.CheckInDate" class="form-control datetimepicker-input" id="checkin" placeholder="Check In" data-target="#date3" data-toggle="datetimepicker" />
+                                    <label for="checkin">Check In</label>
+                                    <ValidationMessage For="()=> _model.CheckInDate" class="text-danger" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating date" id="date4" data-target-input="nearest">
+                                    <InputDate @bind-Value="_model.CheckOutDate" class="form-control datetimepicker-input" id="checkout" placeholder="Check Out" data-target="#date4" data-toggle="datetimepicker" />
+                                    <label for="checkout">Check Out</label>
+                                    <ValidationMessage For="()=> _model.CheckOutDate" class="text-danger" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                               <div class="form-floating">
+                                    <InputSelect
+                                        ValueExpression="() => _model.Adults"
+                                        ValueChanged="(int? newAdults) => HandleAdultChange(newAdults)"
+                                        class="form-select" 
+                                        id="select1">
+                                        @for (int i = 0; i < 6; i++)
+                                        {
+                                            <option value="@i">@i Người lớn</option>
+                                        }
+                                    </InputSelect>
+                                    <label for="select1">Chọn người lớn</label>
+                               </div>
+                                <ValidationMessage For="()=> _model.Adults" class="text-danger" />
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <InputSelect
+                                        ValueExpression="() => _model.Adults"
+                                        ValueChanged="(int? newChildrens) => HandleChildrenChange(newChildrens)"
+                                        class="form-select" 
+                                        id="select2">
+                                        @for (int i = 0; i < 6; i++)
+                                        {
+                                            <option value="@i">@i @(i > 1 ? "Trẻ em" : "Trẻ em")</option>
+                                        }
+                                    </InputSelect>
+                                    <label for="select2">Chọn trẻ em</label>
+                                </div>
+                                <ValidationMessage For="()=> _model.Children" class="text-danger" />
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                  
+                                    <InputSelect
+                                        Value="@_model.RoomTypeId"
+                                        ValueExpression="() => _model.RoomTypeId"
+                                        ValueChanged="(short id) => HandleRoomTypeChange(id)"
+                                        class="form-select" 
+                                        id="select3">
+                                        <option value="0">Chọn phòng</option>
+                                        @foreach(var roomType in _roomTypes)
+                                        {
+                                            <option value="@roomType.Id">@roomType.Name - @roomType.AdditionalData</option>
+                                        }
+                                    </InputSelect>
+                                    <label for="select3">Chọn phòng</label>
+                                </div>  
+                                <ValidationMessage For="()=> _model.RoomTypeId" class="text-danger" />
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <InputTextArea @bind-Value="_model.SpecialRequest" class="form-control" placeholder="Special Request" id="message" style="height: 100px">
+
+                                    </InputTextArea>
+                                    
+                                    <label for="message">Special Request</label>
+                                </div>
+                            </div>
+                            <ValidationMessage For="()=> _model.SpecialRequest" class="text-danger" />
+                            <div class="col-12">
+                                <p>
+                                    <strong>Tổng cộng : @TotalAmount.ToString("c")</strong>
+                                </p>
+                            </div>
+                            @if (!string.IsNullOrWhiteSpace(_message))
+                            {
+                                <div class="col-12">
+                                    <p class="text-danger">@_message</p>
+                                </div>
+                            }
+                            <div class="col-12">
+                                <button class="btn btn-primary w-100 py-3" type="submit">Đặt ngay</button>
+                            </div>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (_isLoading)
+{
+    <Loader LoadingText="@_loadingText" />
+}
+@code {
+    [SupplyParameterFromQuery(Name = "room-type")]
+    public string? SelectedRoomType { get; set; }
+    private BookingModel _model = new();
+    private LookUpModel<short,decimal>[] _roomTypes = [];
+
+    private bool _isAuthenticated { get; set; }
+    private string? _userId { get; set; }
+
+    private bool _isLoading;
+    private string? _loadingText;
+    private string? _message { get; set; }
+    private decimal _price = 0;
+    private int NumOfDays => (_model.CheckOutDate.DayNumber - _model.CheckInDate.DayNumber);
+    private decimal TotalAmount => NumOfDays * _price;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var roomTypesTask = RoomsService.GetRoomTypesLookUp();
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        if(authState.User.Identity.IsAuthenticated == true)
+        {
+            //Người dùng đã đăng nhập
+            //lấy chi tiết người dùng từ claims của authstate đã lưu
+            _isAuthenticated = true;
+            _userId = authState.User.GetUserId();
+            _model.SetCloneValues();
+        }
+        _roomTypes = await roomTypesTask;
+        if (!string.IsNullOrWhiteSpace(SelectedRoomType) && 
+        short.TryParse(SelectedRoomType,out short roomTypeId) &&
+        roomTypeId > 0)
+        {
+            HandleRoomTypeChange(roomTypeId);
+
+        }
+    }
+
+    private async Task HandleAdultChange(int? newAdults)
+    {
+        _model.Adults = newAdults;
+        _filterModel.Adults = _model.Adults;
+        await FilterRoomTypes();
+    }
+
+    private async Task HandleChildrenChange(int? newChildrens)
+    {
+        _model.Children = newChildrens;
+        _filterModel.Children = _model.Children;
+        await FilterRoomTypes();
+    }
+
+    private FilterModel _filterModel = new();
+
+    private async Task FilterRoomTypes()
+    {
+        _message = null;
+        _roomTypes = await RoomsService.GetRoomTypesLookUp(_filterModel);
+    }
+    private void HandleRoomTypeChange(short newRoomTypeId)
+    {
+        _model.RoomTypeId = newRoomTypeId;
+        var roomType = _roomTypes.FirstOrDefault(rt => rt.Id == newRoomTypeId);
+        _price = roomType.AdditionalData;
+    }
+
+    private async Task BookRoomAsync()
+    {
+        _message = null;
+        try
+        {
+            _isLoading = true;
+            _loadingText = "Đang tải";
+
+            string? userId = _userId;
+            if (!_isAuthenticated)
+            {
+                //Đăng nhập với role là khách
+                userId = await RegisterUserAsync();
+                if (userId is null)
+                {
+                    _isLoading = false;
+                    return;
+                }
+            }
+            //Đặt phòng logic
+            var bookingId = await MakeBookingAsync(userId!);
+            if (bookingId is null)
+            {
+
+                _isLoading = false;
+                return;
+            }
+            
+            //Thanh toán
+            await PayNowAsync(bookingId.Value);
+        }catch(Exception ex)
+        {
+            _message = ex.Message;
+            _isLoading = false;
+        }
+    }
+
+    private async Task<string> RegisterUserAsync()
+    {
+
+
+        var user = new ApplicationUser();
+
+        user.FirstName = _model.FirstName;
+        user.LastName = _model.LastName;
+        user.ContactNumber = _model.ContactNumber;
+        user.RoleName = RoleType.Guest.ToString();
+
+        var result = await UserService.CreateUserAsync(user, _model.Email, _model.Password);
+        if (!result.IsSuccess && (result.Data is null || !string.IsNullOrWhiteSpace(result.Data.Id)))
+        {
+            _message = result.ErrorMessage;
+            return null;
+
+        }
+        return result.Data.Id;
+
+    }
+
+    private async Task<long?> MakeBookingAsync(string userId)
+    {
+        _model.Amount = TotalAmount;
+        var result = await BookingService.MakeBookingAsync(_model, userId);
+        if (!result.IsSuccess)
+        {
+            _message = result.ErrorMessage;
+            return null;
+        }
+        return result.Data;
+    }
+
+    private async Task PayNowAsync(long bookingId)
+    {
+        var domain = NavigationManager.BaseUri.TrimEnd('/');
+        var roomTypeName = _roomTypes.First(rt => rt.Id == _model.RoomTypeId).Name;
+        var paymentModel = new PaymentModel(bookingId,roomTypeName,NumOfDays,TotalAmount);
+        var paymentUrl = await PaymentService.GeneratePaymentUrl(paymentModel,_userId!,domain);
+
+
+        NavigationManager.NavigateTo(paymentUrl);
+    }
+}

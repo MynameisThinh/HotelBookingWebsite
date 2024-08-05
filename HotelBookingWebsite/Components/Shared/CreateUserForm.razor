@@ -1,0 +1,160 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using System.Text
+@using System.Text.Encodings.Web
+@using HotelBookingWebsite.Components.Account
+@using HotelBookingWebsite.Components.Account.Shared
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.WebUtilities
+@using HotelBookingWebsite.Data
+
+@inject ILogger<CreateUserForm> Logger
+@inject NavigationManager NavigationManager
+@inject IUserService UserService
+
+
+<StatusMessage Message="@_message" />
+<EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register">
+            <DataAnnotationsValidator />
+    @if (_showSubHeading)
+    {
+        <h2>Tạo tài khoản mới</h2>
+    }
+    <hr />
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-floating mb-3">
+                        <InputText @bind-Value="Input.FirstName" class="form-control" autocomplete="username" aria-required="true" placeholder="Tên" />
+                        <label for="email">Tên</label>
+                        <ValidationMessage For="() => Input.FirstName" class="text-danger" />
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-floating mb-3">
+                        <InputText @bind-Value="Input.LastName" class="form-control" autocomplete="username" aria-required="true" placeholder="Họ" />
+                        <label for="email">Họ</label>
+                        <ValidationMessage For="() => Input.LastName" class="text-danger" />
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-floating mb-3">
+                        <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="Email" />
+                        <label for="email">Email</label>
+                        <ValidationMessage For="() => Input.Email" class="text-danger" />
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-floating mb-3">
+                        <InputText @bind-Value="Input.ContactNumber" class="form-control" placeholder="Số điện thoại" />
+                        <label for="password">Số điện thoại</label>
+                        <ValidationMessage For="() => Input.ContactNumber" class="text-danger" />
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-floating mb-3">
+                        <InputText type="password" @bind-Value="Input.Password" class="form-control" aria-required="true" placeholder="Mật khẩu" />
+                        <label for="password"> Mật khẩu</label>
+                        <ValidationMessage For="() => Input.Password" class="text-danger" />
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-floating mb-3">
+                        <InputText type="password" @bind-Value="Input.ConfirmPassword" class="form-control" aria-required="true" autocomplete="new-password" placeholder="Xác nhận mật khẩu" />
+                        <label for="confirm-password">Xác nhận mật khẩu</label>
+                        <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
+                    </div>
+                </div>
+        @if (_showDesignation)
+        {
+            <div class="col-sm-6">
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="Input.Designation" class="form-control" placeholder="Chức vụ" />
+                    <label for="confirm-password">Chức vụ</label>
+                    <ValidationMessage For="() => Input.Designation" class="text-danger" />
+                </div>
+            </div>
+        }
+    </div>
+
+            <div>
+        <button type="submit" class="w-100 btn btn-lg btn-primary">@_submitButtonText</button>
+            </div>
+    @if (_showLoginLink)
+            {
+                <div class="mt-3">
+                    <p>
+                        <a href="@(NavigationManager.GetUriWithQueryParameters("Account/Login", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))">Đã có tài khoản ?</a>
+                    </p>
+                </div>
+            }
+        </EditForm>
+
+@code {
+    //private IEnumerable<IdentityError>? identityErrors;
+    [Parameter]
+    public RoleType Role { get; set; } = RoleType.Guest;
+
+    [Parameter]
+    public EventCallback OnSuccess { get; set; }
+
+    private string _submitButtonText = "Đăng ký" ;
+
+    private bool _showLoginLink = true;
+    private bool _showSubHeading = true;
+    private bool _showDesignation = false;
+
+    [SupplyParameterFromForm]
+    private RegisterUserModel Input { get; set; } = new();
+
+    [SupplyParameterFromQuery]
+    private string? ReturnUrl { get; set; }
+
+    private string? _message = null; // => identityErrors is null ? null : $"Error: {string.Join(", ", identityErrors.Select(error => error.Description))}";
+
+    protected override void OnParametersSet()
+    {
+        if(Role != RoleType.Guest)
+        {
+            _submitButtonText = "Tạo nhân viên";
+            _showLoginLink = _showSubHeading = false;
+            _showDesignation = true;
+        }
+    }
+    public async Task RegisterUser(EditContext editContext)
+    {
+        var user = CreateUser();
+
+        user.FirstName = Input.FirstName;
+        user.LastName = Input.LastName;
+        user.ContactNumber = Input.ContactNumber;
+        user.RoleName = Role.ToString();
+        user.Designation = Input.Designation;
+
+        var result = await UserService.CreateUserAsync(user, Input.Email, Input.Password);
+        if (!result.IsSuccess)
+        {
+            _message = result.ErrorMessage;
+            return;
+        }
+
+
+        Logger.LogInformation("Người dùng tạo tài khoản mới thành công.");
+
+        await OnSuccess.InvokeAsync();
+    }
+
+    private ApplicationUser CreateUser()
+    {
+        try
+        {
+            return Activator.CreateInstance<ApplicationUser>();
+        }
+        catch
+        {
+            throw new InvalidOperationException($"Can't create an instance of '{nameof(ApplicationUser)}'. " +
+                $"Ensure that '{nameof(ApplicationUser)}' is not an abstract class and has a parameterless constructor.");
+        }
+    }
+
+
+}

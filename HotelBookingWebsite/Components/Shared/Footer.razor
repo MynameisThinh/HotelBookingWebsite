@@ -1,0 +1,80 @@
+﻿@using Microsoft.Extensions.Options
+@inject IOptions<ContactInfoOption> ContactInfoOptions
+
+<!-- Footer Start -->
+<div class="container-fluid bg-dark text-light footer wow fadeIn" data-wow-delay="0.1s">
+    <div class="container pb-5">
+        <div class="row g-5">
+            <div class="col-md-6 col-lg-4">
+                <div class="bg-primary rounded p-4">
+                    <a href="index.html"><h1 class="text-white text-uppercase mb-3">Fancier Hotel</h1></a>
+                    <p class="text-white mb-0">
+                        Download <a class="text-dark fw-medium" href="https://htmlcodex.com/hotel-html-template-pro">Fancier – Phiên bản nâng cấp</a>, xây dựng trang web chuyên nghiệp cho hoạt động kinh doanh khách sạn của bạn và thu hút sự chú ý của khách để truy cập khi trang web của bạn ra mắt.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <h6 class="section-title text-start text-primary text-uppercase mb-4">Liên hệ</h6>
+                <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>@_contactOptions.Address</p>
+                <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>@_contactOptions.ContactNumber</p>
+                <p class="mb-2"><i class="fa fa-envelope me-3"></i>@_contactOptions.GeneralEmail</p>
+                <div class="d-flex pt-2">
+                    <a class="me-3" href="https://www.facebook.com/IAmTh1nh" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <a class="me-3" href="https://www.linkedin.com/in/aolamtruongthinh/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                    <a class="me-3" href="https://www.instagram.com/altt25_10/" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a class="me-3" href="https://www.youtube.com/channel/UChZukGVgGIhWAFfJXGLe9tQ" target="_blank"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-5 col-md-12">
+                <div class="row gy-5 g-4">
+                    <div class="col-md-6">
+                        <h6 class="section-title text-start text-primary text-uppercase mb-4">Công ty</h6>
+                        <a class="btn btn-link" href="/about-us">Về chúng tôi</a>
+                        <a class="btn btn-link" href="/contact">Liên hệ</a>
+                        <a class="btn btn-link" href="">Chính sách riêng tư</a>
+                        <a class="btn btn-link" href="">Thỏa thuận và điều kiện</a>
+                        <a class="btn btn-link" href="">Hỗ trợ</a>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="section-title text-start text-primary text-uppercase mb-4">Dịch vụ</h6>
+                        <a class="btn btn-link" href="/services">Thức ăn và nhà hàng</a>
+                        <a class="btn btn-link" href="/services">Spa & Thể dục</a>
+                        <a class="btn btn-link" href="/services">Thể thao và Gaming</a>
+                        <a class="btn btn-link" href="/services">Sự kiện và tiệc tùng</a>
+                        <a class="btn btn-link" href="/services">GYM và Yoga</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="copyright">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                    &copy; <a class="border-bottom" href="#">Fancier Hotel</a> Tất cả các quyền.
+
+                    <!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
+                    Thiết kế bởi <a class="border-bottom" href="https://htmlcodex.com">HTML Codex</a>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <div class="footer-menu">
+                        <a href="/">Trang chủ</a>
+                        <a href="">Cookies</a>
+                        <a href="">Trợ giúp</a>
+                        <a href="">FQAs</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Footer End -->
+
+@code {
+    private ContactInfoOption _contactOptions = new();
+
+    protected override void OnInitialized()
+    {
+        _contactOptions = ContactInfoOptions.Value;
+    }
+}
