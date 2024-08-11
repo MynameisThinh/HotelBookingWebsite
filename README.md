@@ -8,3 +8,4 @@ Tiếp tục em tạo các service tương ứng với từng nghiệp vụ củ
 Sau đó cũng debug và fix lỗi (phần js làm em hơi mất thời gian khá nhiều vì nhiều lúc nó không hiện lỗi mà do thiếu inject vài thư viện trong blazor) test lại các chức năng kỹ lưỡng. 
 Xây dựng xong trong vòng gần 4 tháng.(Nếu quá chậm thì cho em xin lỗi ạ)
 Cảm ơn anh/chị đã quan tâm và đọc hết nội dung trên. Em xin cảm ơn.
+link UI : https://htmlcodex.com/hotel-html-template/
